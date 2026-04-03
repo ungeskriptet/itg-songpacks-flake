@@ -144,6 +144,29 @@ def check_gdrive(args):
     info("Finished checking Google Drive availability")
 
 
+def fill_hashes(args):
+    """
+    Input file example:
+    {
+      'pack-drv-name-1': 'sha256-AAA...',
+      'pack-drv-name-2': 'sha256-BBB...'
+    }
+    """
+    with open(args.input) as input_file:
+        packs = json.load(input_file)
+
+        with open(args.hashes) as hash_file:
+            hashes = json.load(hash_file)
+            for pack_key, pack_value in packs.items():
+                for hash_key, hash_value in hashes.items():
+                    if pack_key == hash_key:
+                        packs[pack_key]["hash"] = hash_value
+
+        with open(args.output, "w") as file:
+            info(f"'{args.output}' created")
+            json.dump(packs, file, ensure_ascii=False, sort_keys=True, indent="\t")
+
+
 def main():
     parser = ArgumentParser()
     subparsers = parser.add_subparsers()
@@ -174,6 +197,28 @@ def main():
         "--output",
         "-o",
         default="itgpacks-gdrive-failed.json",
+        type=Path,
+        help="Output file",
+    )
+
+    fill_hashes_arg = subparsers.add_parser(
+        "fill_hashes", aliases=["f"], help="Fill hashes"
+    )
+    fill_hashes_arg.set_defaults(func=fill_hashes)
+    fill_hashes_arg.add_argument(
+        "--input", "-i", default="itgpacks-generated.json", type=Path, help="Input file"
+    )
+    fill_hashes_arg.add_argument(
+        "--hashes",
+        "-H",
+        default="itgpacks-hashes.json",
+        type=Path,
+        help="Input file with hashes",
+    )
+    fill_hashes_arg.add_argument(
+        "--output",
+        "-o",
+        default="itgpacks-filled-hashes.json",
         type=Path,
         help="Output file",
     )
