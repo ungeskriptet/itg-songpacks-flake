@@ -1,18 +1,15 @@
 #!/usr/bin/env python
 import json
 import re
+import sys
+from argparse import ArgumentParser
+from pathlib import Path
 from urllib.error import HTTPError
 from urllib.parse import urlparse, urlencode
 from urllib.request import Request, urlopen
 
-"""
-Input file: itgpacks.json
-Example:
-[
-  ["Pack Name 1", "https://url-1"],
-  ["Pack Name 2", "https://url-2"]
-]
-"""
+
+"""This is a mess"""
 
 
 def info(text):
@@ -24,8 +21,6 @@ def warning(text):
 
 
 def sanitize(name: str):
-    """This is a mess"""
-
     original_name = name
 
     # Remove leading dots
@@ -64,13 +59,20 @@ def sanitize(name: str):
     return name
 
 
-def gen_json():
+def gen_json(args):
+    """
+    Input file example:
+    [
+      ["Pack Name 1", "https://url-1"],
+      ["Pack Name 2", "https://url-2"]
+    ]
+    """
     packs_dict = {}
     packs_nonascii = {}
 
     info("Generating itgpacks-generated.json")
 
-    with open("itgpacks.json") as f:
+    with open(args.input) as f:
         packs = json.load(f)
         for name, url in packs:
             # Filter supported sources
@@ -107,18 +109,18 @@ def gen_json():
                         )
                 packs_dict[name] = {"url": url, "hash": ""}
 
-        with open("itgpacks-generated.json", "w") as file:
+        with open(args.output, "w") as file:
             json.dump(packs_dict, file, ensure_ascii=False, sort_keys=True, indent="\t")
 
-        info("Finished generating itgpacks-generated.json")
+        info("Finished generating '{args.output}'")
 
 
-def check_gdrive():
+def check_gdrive(args):
     packs_dict = {}
 
     info("Checking Google Drive availability")
 
-    with open("itgpacks-generated.json") as f:
+    with open(args.input) as f:
         packs = json.load(f)
         for key, value in packs.items():
             req = Request(url=value["url"], method="GET")
@@ -135,11 +137,50 @@ def check_gdrive():
                         raise
 
     if packs_dicts != {}:
-        with open("itgpacks-gdrive-failed.json", "w") as file:
+        with open(args.output, "w") as file:
+            info(f"'{args.output}' created")
             json.dump(packs_dict, file, ensure_ascii=False, sort_keys=True, indent="\t")
 
     info("Finished checking Google Drive availability")
 
 
-gen_json()
-# check_gdrive()
+def main():
+    parser = ArgumentParser()
+    subparsers = parser.add_subparsers()
+
+    gen_json_arg = subparsers.add_parser(
+        "gen_json", aliases=["g"], help="Generate JSON file"
+    )
+    gen_json_arg.set_defaults(func=gen_json)
+    gen_json_arg.add_argument(
+        "--input", "-i", default="itgpacks.json", type=Path, help="Input file"
+    )
+    gen_json_arg.add_argument(
+        "--output",
+        "-o",
+        default="itgpacks-generated.json",
+        type=Path,
+        help="Output file",
+    )
+
+    check_gdrive_arg = subparsers.add_parser(
+        "check_gdrive", aliases=["c"], help="Check Google Drive links"
+    )
+    check_gdrive_arg.set_defaults(func=check_gdrive)
+    check_gdrive_arg.add_argument(
+        "--input", "-i", default="itgpacks-generated.json", type=Path, help="Input file"
+    )
+    check_gdrive_arg.add_argument(
+        "--output",
+        "-o",
+        default="itgpacks-gdrive-failed.json",
+        type=Path,
+        help="Output file",
+    )
+
+    args = parser.parse_args(args=None if sys.argv[1:] else ["--help"])
+    args.func(args)
+
+
+if __name__ == "__main__":
+    main()
