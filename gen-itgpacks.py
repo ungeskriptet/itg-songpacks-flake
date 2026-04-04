@@ -52,6 +52,9 @@ def sanitize(name: str):
     # Replace empty names with "unknown"
     name = "unknown" if len(name) == 0 or name == "-" else name
 
+    # Fix possessive nouns
+    name = "s-".join(name.split("-s-"))
+
     if len(name) >= 30:
         warning(f"'{name}' has a long name")
     if name == "unknown":
@@ -164,8 +167,24 @@ def fill_hashes(args):
                         packs[pack_key]["hash"] = hash_value
 
         with open(args.output, "w") as file:
-            info(f"'{args.output}' created")
             json.dump(packs, file, ensure_ascii=False, sort_keys=True, indent="\t")
+            info(f"'{args.output}' created")
+
+
+def sanitize_file(args):
+    with open(args.input) as input_file:
+        info(f"Sanitizing '{args.output}'")
+        packs = json.load(input_file)
+        packs_sanitized = {}
+        for key, value in packs.items():
+            name = sanitize(key)
+            packs_sanitized[name] = value
+
+        with open(args.output, "w") as file:
+            json.dump(
+                packs_sanitized, file, ensure_ascii=False, sort_keys=True, indent="\t"
+            )
+            info(f"'{args.output}' created")
 
 
 def main():
@@ -220,6 +239,21 @@ def main():
         "--output",
         "-o",
         default="itgpacks-filled-hashes.json",
+        type=Path,
+        help="Output file",
+    )
+
+    sanitize_arg = subparsers.add_parser(
+        "sanitize", aliases=["s"], help="Sanitize pack names"
+    )
+    sanitize_arg.set_defaults(func=sanitize_file)
+    sanitize_arg.add_argument(
+        "--input", "-i", default="songs.json", type=Path, help="Input file"
+    )
+    sanitize_arg.add_argument(
+        "--output",
+        "-o",
+        default="itgpacks-sanitized.json",
         type=Path,
         help="Output file",
     )
