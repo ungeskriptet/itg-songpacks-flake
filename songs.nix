@@ -12,8 +12,9 @@ let
     {
       name,
       url,
-      hash,
-      extension,
+      hash ? "",
+      extension ? "zip",
+      rootdir ? null,
     }:
     stdenvNoCC.mkDerivation (finalAttrs: {
       inherit name;
@@ -45,18 +46,27 @@ let
         runHook postUnpack
       '';
 
-      preInstall = ''
-        rm -rf __MACOSX
-        if [ $(ls -A . | wc -l) != 1 ]; then
-          echo "error: song pack must contain a single directory."
-          exit 1
-        fi
-      '';
+      preInstall =
+        if rootdir == null then
+          ''
+            rm -rf __MACOSX
+            if [ $(ls -A . | wc -l) != 1 ]; then
+              echo "error: song pack must contain a single directory."
+              exit 1
+            fi
+          ''
+        else
+          "";
 
-      postInstall = ''
-        mkdir -p "$out"/itgmania/Songs
-        mv * "$out"/itgmania/Songs
-      '';
+      postInstall =
+        let
+          source = if rootdir != null then lib.escapeShellArg "${rootdir}" else "*";
+          dest = if rootdir != null then lib.escapeShellArg "/${rootdir}" else "";
+        in
+        ''
+          mkdir -p "$out"/itgmania/Songs
+          mv ${source} "$out"/itgmania/Songs${dest}
+        '';
     });
 
   songPacks = lib.mapAttrs (
@@ -65,6 +75,7 @@ let
     // {
       hash = v.hash or "";
       extension = v.extension or "zip";
+      rootdir = v.rootdir or null;
     }
   ) (lib.importJSON ./songs.json);
 
@@ -72,7 +83,12 @@ let
     name: value:
     lib.nameValuePair name (buildSongPack {
       inherit name;
-      inherit (value) url hash extension;
+      inherit (value)
+        url
+        hash
+        extension
+        rootdir
+        ;
     })
   ) songPacks;
 in
