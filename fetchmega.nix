@@ -7,6 +7,7 @@ lib.fetchers.withNormalizedHash { } (
   {
     url,
     name ? baseNameOf url,
+    allowedFailures ? "4",
     outputHash,
     outputHashAlgo,
     recursiveHash ? false,
@@ -18,6 +19,18 @@ lib.fetchers.withNormalizedHash { } (
       nativeBuildInputs = [ megatools ];
     }
     ''
-      megadl ${url} --path "$out"
+      set +e
+      failures=0
+      while IFS= read -r line; do
+        if echo "$line" | grep "WARNING: chunk download failed"; then
+          ((failures++))
+          echo "Detected mega.nz failure ($failures/${allowedFailures})"
+        fi
+        if [ $failures -ge ${allowedFailures} ]; then
+          echo "Too many mega.nz failures, exiting."
+          exit 1
+        fi
+      done < <(megadl ${url} --path "$out" 2>&1)
+      set -e
     ''
 )
