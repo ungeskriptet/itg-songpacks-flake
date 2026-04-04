@@ -18,13 +18,6 @@ lib.fetchers.withNormalizedHash { } (
       nativeBuildInputs = [ megatools ];
     }
     ''
-      if ! megadl ${url} --path "$out"; then
-        cat <<EOF
-          Error: Couldn't download file from MEGA.
-          The daily download limit might have been reached.
-          Try again later or try downloading from a different
-          public IP to bypass this restriction.
-      EOF
-      fi
+      megadl ${url} --path "$out"
     ''
 )
