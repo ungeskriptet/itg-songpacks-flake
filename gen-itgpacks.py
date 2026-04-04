@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import csv
 import json
 import re
 import sys
@@ -61,11 +62,8 @@ def sanitize(name: str):
 
 def gen_json(args):
     """
-    Input file example:
-    [
-      ["Pack Name 1", "https://url-1"],
-      ["Pack Name 2", "https://url-2"]
-    ]
+    Input file must use comma as the field delimiter
+    and double quotes as the string delimiter.
     """
     packs_dict = {}
     packs_nonascii = {}
@@ -73,7 +71,7 @@ def gen_json(args):
     info("Generating itgpacks-generated.json")
 
     with open(args.input) as f:
-        packs = json.load(f)
+        packs = csv.reader(f, delimiter=",", quotechar='"')
         for name, url in packs:
             # Filter supported sources
             if (
@@ -112,7 +110,7 @@ def gen_json(args):
         with open(args.output, "w") as file:
             json.dump(packs_dict, file, ensure_ascii=False, sort_keys=True, indent="\t")
 
-        info("Finished generating '{args.output}'")
+        info(f"Finished generating '{args.output}'")
 
 
 def check_gdrive(args):
@@ -176,14 +174,14 @@ def main():
     )
     gen_json_arg.set_defaults(func=gen_json)
     gen_json_arg.add_argument(
-        "--input", "-i", default="itgpacks.json", type=Path, help="Input file"
+        "--input", "-i", default="itgpacks.csv", type=Path, help="CSV input file"
     )
     gen_json_arg.add_argument(
         "--output",
         "-o",
         default="itgpacks-generated.json",
         type=Path,
-        help="Output file",
+        help="JSON output file",
     )
 
     check_gdrive_arg = subparsers.add_parser(
