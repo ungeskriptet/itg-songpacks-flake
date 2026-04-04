@@ -300,6 +300,7 @@
 	},
 	"boo-dance-3": {
 		"hash": "sha256-tpuwRBSGMytkzsSo/Vxc2FoWNZXRtgtSxMAb0ddIM4A=",
+		"rootdir": "boo.dance#3",
 		"url": "https://boo.dance/simfiles/boo.dance%233.zip"
 	},
 	"bpm-bangerz-per-minute": {
