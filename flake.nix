@@ -28,6 +28,13 @@
                 enable = true;
                 settings.assist.actions.source.useSortedKeys = "on";
               };
+              mdformat = {
+                enable = true;
+                settings = {
+                  number = true;
+                  wrap = 100;
+                };
+              };
             };
             settings = {
               verbose = 1;
