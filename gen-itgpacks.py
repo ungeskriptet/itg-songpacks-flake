@@ -76,6 +76,7 @@ def gen_json(args):
             # Filter supported sources
             if (
                 url.startswith("https://drive.google.com/file/d/")
+                or url.startswith("https://boo.dance/")
                 or url.startswith("https://fs.electr1.ca/")
                 or url.startswith("https://github.com/")
                 or url.startswith("https://mega.nz/")
@@ -90,6 +91,8 @@ def gen_json(args):
                 or url.startswith("https://zaneis.moe/")
             ):
                 name = sanitize(name)
+                if url.startswith("https://peekingboo.com/"):
+                    url = url.replace("https://peekingboo.com/", "https://boo.dance/")
                 if url.startswith("https://drive.google.com/file/d/"):
                     id = url.split("https://drive.google.com/file/d/")[1].split("/")[0]
                     url = f"https://drive.usercontent.google.com/download?confirm=t&id={id}"
