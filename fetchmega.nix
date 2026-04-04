@@ -1,7 +1,7 @@
 {
   lib,
   runCommand,
-  megacmd,
+  megatools,
 }:
 lib.fetchers.withNormalizedHash { } (
   {
@@ -15,10 +15,10 @@ lib.fetchers.withNormalizedHash { } (
     {
       inherit outputHash outputHashAlgo;
       outputHashMode = if recursiveHash then "recursive" else "flat";
-      nativeBuildInputs = [ megacmd ];
+      nativeBuildInputs = [ megatools ];
     }
     ''
-      if ! mega-get ${url} "$out"; then
+      if ! megadl ${url} --path "$out"; then
         cat <<EOF
           Error: Couldn't download file from MEGA.
           The daily download limit might have been reached.
