@@ -10,15 +10,20 @@ lib.fetchers.withNormalizedHash { } (
     allowedFailures ? "4",
     outputHash,
     outputHashAlgo,
-    recursiveHash ? false,
   }:
+  let
+    isFolder = builtins.match "https://mega.nz/folder/(.*)" url != null;
+  in
   runCommand name
     {
       inherit outputHash outputHashAlgo;
-      outputHashMode = if recursiveHash then "recursive" else "flat";
+      outputHashMode = if isFolder then "recursive" else "flat";
       nativeBuildInputs = [ megatools ];
     }
     ''
+      ${lib.optionalString isFolder ''
+        mkdir -p "$out"
+      ''}
       set +e
       failures=0
       while IFS= read -r line; do
