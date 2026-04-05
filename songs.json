@@ -642,7 +642,9 @@
 		"url": "https://drive.usercontent.google.com/download?confirm=t&id=1KD3dRAPx4Yer1kit-busWQ2n3PaXN3u_"
 	},
 	"double-raccoon": {
-		"hash": "",
+		"extension": "",
+		"hash": "sha256-NUPJhqHtf40HEbuCz9QWVSw+10/mHsnGS0k8E2uBroA=",
+		"rootdir": "Double Raccoon",
 		"url": "https://mega.nz/folder/2R9Q1ACL#-Bh2wuXnZwo7AR8nza59FQ"
 	},
 	"doubles-tournament-expansion-r6": {
