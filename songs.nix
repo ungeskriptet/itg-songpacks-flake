@@ -4,8 +4,8 @@
   newScope,
   fetchurl,
   fetchMega,
+  _7zz,
   unrar-free,
-  unzip,
 }:
 let
   buildSongPack =
@@ -29,9 +29,17 @@ let
           fetchMega { inherit url hash name; };
 
       nativeBuildInputs = [
+        _7zz
         unrar-free
-        unzip
       ];
+
+      preUnpack = ''
+        unpackCmdHooks+=(_try7zip)
+        _try7zip() {
+          if ! [[ $curSrc =~ \.zip$ ]]; then return 1; fi
+          7zz x "$curSrc"
+        }
+      '';
 
       unpackPhase = ''
         runHook preUnpack
