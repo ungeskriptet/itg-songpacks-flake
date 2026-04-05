@@ -462,6 +462,7 @@
 	},
 	"conflicting": {
 		"hash": "sha256-/aOXEYhmSpZsAW3lxz6vRKIESvzIhEOzMehunfS/+W4=",
+		"rootdir": "conflicting",
 		"url": "https://mega.nz/file/pLlz1bSD#lnkNc9kYovqIRRGKB92BL115x1bNavWiXdZLIxUahss"
 	},
 	"cookies-cookies": {
