@@ -400,6 +400,7 @@
 	},
 	"ceristreams": {
 		"hash": "sha256-2DzkY4C7QU32RwlxcrP3j7GsbUr5oZoIxeCnaTkFr14=",
+		"rootdir": "CERiSTREAMS",
 		"url": "https://github.com/cerisyl/itg-releases/raw/main/packs/CERiSTREAMS.zip"
 	},
 	"chase-ing-the-pack-2": {
