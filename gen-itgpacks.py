@@ -92,6 +92,7 @@ def gen_json(args):
                 or url.startswith("https://stepmaniaonline.net/")
                 or url.startswith("https://www.dropbox.com/")
                 or url.startswith("https://zaneis.moe/")
+                or url.startswith("https://zenius-i-vanisher.com/")
             ):
                 name = sanitize(name)
                 if url.startswith("https://peekingboo.com/"):
