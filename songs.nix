@@ -16,6 +16,7 @@ let
       extension ? "zip",
       rootdir ? null,
     }:
+    assert extension == "" -> rootdir != null;
     stdenvNoCC.mkDerivation (finalAttrs: {
       inherit name;
 
@@ -46,10 +47,19 @@ let
         unpackDir="$TMPDIR/unpack"
         mkdir "$unpackDir"
         cd "$unpackDir"
-
-        renamed="$TMPDIR/${name}.${extension}"
-        cp -r "$src" "$renamed"
-        unpackFile "$renamed"
+        ${
+          if extension != "" then
+            ''
+              renamed="$TMPDIR/${name}.${extension}"
+              cp -r "$src" "$renamed"
+              unpackFile "$renamed"
+            ''
+          else
+            ''
+              mkdir "${rootdir}"
+              cp -r "$src"/{.*,*} "${rootdir}"
+            ''
+        }
         chmod -R +w "$unpackDir"
         runHook postUnpack
       '';
