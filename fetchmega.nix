@@ -30,6 +30,7 @@ lib.fetchers.withNormalizedHash { } (
           echo "Too many mega.nz failures, exiting."
           exit 1
         fi
+        echo $line
       done < <(megadl ${url} --path "$out" 2>&1)
       set -e
     ''
