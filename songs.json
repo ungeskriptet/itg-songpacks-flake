@@ -336,8 +336,8 @@
 		"url": "https://drive.usercontent.google.com/download?confirm=t&id=1Yqck-5kb3ED0n_gnM-7tuHwgVMNgBpMB"
 	},
 	"brainrot": {
-		"hash": "",
-		"url": "https://mega.nz/file/Ud0QkTqZ#42zMWFuKdi05mKYX5Zf_OKbz1BWxJHVv9TiDIRXbWXQ"
+		"hash": "sha256-PlFlI/s3juz8D8aD+sFLqMgdH+KCH9gVb/kT73IU2K0=",
+		"url": "https://mirror.reenigne.net/simfiles/brainrot.zip"
 	},
 	"brainrot-2": {
 		"extension": "rar",
