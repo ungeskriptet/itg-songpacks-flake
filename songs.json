@@ -1698,10 +1698,7 @@
 		"url": "https://drive.usercontent.google.com/download?confirm=t&id=1csmzBRv0tZh1cHHNgElFIpSzNgeWZuiY"
 	},
 	"parallel-porting": {
-		"hash": "sha256-g7USpdHWMRE0w1Yb8OBoS7CdX4CuYGOzirc+BnWnWsM=",
-		"url": "https://drive.usercontent.google.com/download?confirm=t&id=1i2u7szORuAZRNMW2fz6kz8neW6DrKfQ1"
-	},
-	"parallel-porting-full-version": {
+		"extension": "rar",
 		"hash": "sha256-g7USpdHWMRE0w1Yb8OBoS7CdX4CuYGOzirc+BnWnWsM=",
 		"url": "https://drive.usercontent.google.com/download?confirm=t&id=1i2u7szORuAZRNMW2fz6kz8neW6DrKfQ1"
 	},
