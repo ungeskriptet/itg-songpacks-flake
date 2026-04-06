@@ -1502,8 +1502,9 @@
 		"hash": "sha256-SKLca5NhdsD9n571XteuPRGqhjeq+TIaXtJrB9EkLdE=",
 		"url": "https://nnty.fun/downloads/game/stepmania/stepmania_packs/Mars%27%20Marvels.zip"
 	},
-	"masna-bie-nia": {
+	"masna-bieznia": {
 		"hash": "sha256-mWS51t1LVp2fmhQLIJiAKrXQ0tsUzrO3sTffg5OW//I=",
+		"rootdir": "MASNA BIEŻNIA",
 		"url": "https://drive.usercontent.google.com/download?confirm=t&id=17dju40BljaYC6W6De-ZcLKbCFPnss36Y"
 	},
 	"mawaru-collection": {
