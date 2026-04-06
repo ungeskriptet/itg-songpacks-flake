@@ -1330,6 +1330,7 @@
 	},
 	"kurren-nutpack": {
 		"hash": "sha256-OdVeszD31fGq/V0tTKdmln5CM2LwSrSe+iVraE9zqIk=",
+		"rootdir": "Kurren Nutpack",
 		"url": "https://drive.usercontent.google.com/download?confirm=t&id=1oV6P46vb-FQGaHNn_ElVFZ6xe5gmx9Qi"
 	},
 	"kyypakkaus-2": {
