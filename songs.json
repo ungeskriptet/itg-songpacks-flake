@@ -1349,10 +1349,6 @@
 		"hash": "sha256-RFPUs7Xfcmm21gjR++iJU5IUCe74XJz5pByFfnlFxik=",
 		"url": "https://nnty.fun/downloads/game/stepmania/stepmania_packs/La%20Belle%20Musique.zip"
 	},
-	"lama-beats-02": {
-		"hash": "sha256-XlIODUaGsRYDE5rIweYDjLC780EzHCMeVsYiAVgqPkY=",
-		"url": "https://mirror.reenigne.net/simfiles/LamaBeats%2002.zip"
-	},
 	"lama-pack": {
 		"hash": "",
 		"url": "https://mega.nz/file/jT50jBRA?fbclid=IwAR0GwgUwr5O9YK5gsGI-jmKWZxmFn3u8TvdLjSWs6Ca0AwwZZhY-qKz9izc#DxTSbzFM6-9yDW3xEaDFtnGsPJliQAmL5u56pTa8ajc"
@@ -1364,6 +1360,10 @@
 	"lamabeats-01": {
 		"hash": "sha256-Yz24dtDHso7Jq0uvMmV/QA6Kc51Xd3FiT6pY339NhJU=",
 		"url": "https://mirror.reenigne.net/simfiles/LamaBeats%2001.zip"
+	},
+	"lamabeats-02": {
+		"hash": "sha256-XlIODUaGsRYDE5rIweYDjLC780EzHCMeVsYiAVgqPkY=",
+		"url": "https://mirror.reenigne.net/simfiles/LamaBeats%2002.zip"
 	},
 	"lamabeats-03": {
 		"hash": "sha256-/a6VeB0zjbiS2rZOdcLTHhH5JQ4kGopw62XBtjZj3X4=",
