@@ -79,7 +79,7 @@ let
       postInstall =
         let
           source = if rootdir != null then lib.escapeShellArg "${rootdir}" else "*";
-          dest = if rootdir != null then lib.escapeShellArg "/${rootdir}" else "";
+          dest = if rootdir != null then lib.escapeShellArg "/${baseNameOf rootdir}" else "";
         in
         ''
           if [ -d ${source} ]; then
