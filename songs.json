@@ -1,4 +1,8 @@
 {
+	"_3guys1pack": {
+		"hash": "sha256-a5OGwLpZIp6Zpc3TK1tYAq1jOexqhnoLOt3HdbO+NtY=",
+		"url": "https://www.dropbox.com/s/n5pmpvl6zhouw3q/3guys1pack%20%28Null%20Offset%29.zip?dl=1"
+	},
 	"_3spooty5me": {
 		"hash": "sha256-pyzFdrNcwgoULhmWTLuvZCqDzgMcjf4Mw9kGP50Uot4=",
 		"rootdir": "3Spooty5Me",
@@ -112,6 +116,10 @@
 		"hash": "sha256-ECHLuJO9BtBeOB1zm83crhpWBKCzOYjR0a3ZUwqYV/A=",
 		"url": "https://nnty.fun/downloads/game/stepmania/stepmania_packs/Ace%27s%20Picks%202%20-%20Serious%20Stuff%20%282013%29.zip"
 	},
+	"adults-only": {
+		"hash": "sha256-2sDKzuCSy71LFYKO8SK1lPiqFk6k8L10AT3E2iMMBSM=",
+		"url": "https://drive.usercontent.google.com/download?confirm=t&id=16m800TCIvhfWmcHYEVcwIEGRg3WRTho_"
+	},
 	"alfalfa-nightmares": {
 		"hash": "sha256-jgqvtKE6575QIiGY1YzkiYWkGZsihhMd74wTyM/+z88=",
 		"url": "https://nnty.fun/downloads/game/stepmania/stepmania_packs/Alfalfa%20Nightmares.zip"
@@ -124,6 +132,26 @@
 	"altruism": {
 		"hash": "sha256-8PS98Fwpv047FoAr4MSYAE3arDUbBx1HlMxybKeleqU=",
 		"url": "https://drive.usercontent.google.com/download?confirm=t&id=1hDKXe7Y1uiblUnbLma5YcvaR_nlsTeL3"
+	},
+	"anime-extravaganza-1": {
+		"hash": "sha256-pG18iJOflieOTbLUjwMkxLw0vIuO6BxsPRRinD8O+ww=",
+		"url": "https://mirror.reenigne.net/simfiles/Anime%20Extravaganza%201.zip"
+	},
+	"anime-extravaganza-2": {
+		"hash": "sha256-HMO0vyzCYZ7TQRk/TOtKSX1Bvr5pxkFH6iWCqX4SO4M=",
+		"url": "https://mirror.reenigne.net/simfiles/Anime%20Extravaganza%202.zip"
+	},
+	"anime-extravaganza-3": {
+		"hash": "sha256-3cd5PFDhG0XelccK9BALaRsPNnp+xzu2ZK/4X6NOKA0=",
+		"url": "https://mirror.reenigne.net/simfiles/Anime%20Extravaganza%203.zip"
+	},
+	"anime-extravaganza-4": {
+		"hash": "sha256-qyYFi4xttS0nVPTuDHnmrvYUku9dbOYxw6z0UVBekNw=",
+		"url": "https://mirror.reenigne.net/simfiles/Anime%20Extravaganza%204.zip"
+	},
+	"anime-extravaganza-5": {
+		"hash": "sha256-XLFKDY9FPYk60Aclo8DHYeKRm4CLMG5PfvCmB9+uqrM=",
+		"url": "https://mirror.reenigne.net/simfiles/Anime%20Extravaganza%205.zip"
 	},
 	"anime-music-pack-2": {
 		"hash": "sha256-uscH3E3bzrmpEv8azSGsnUTImCKd/665ZJRKNFZoB0s=",
@@ -169,6 +197,10 @@
 		"hash": "sha256-vviZlL+Emi3Ob0aJUtHlWBc9f6vQyi6SxpUdc6wKODU=",
 		"url": "https://drive.usercontent.google.com/download?confirm=t&id=1F_boZXkFkNC0HjWR6J48vzh8tuyUPZ6U"
 	},
+	"axor": {
+		"hash": "sha256-uwwjpcDo/zrV5q9pqkcePP1t4YT7bb+c+NIxWnqbahs=",
+		"url": "https://nextcloud.573573573.xyz/s/repo/download?path=%2Fpacks&files=Axor"
+	},
 	"badjas-bad-beats-2": {
 		"hash": "sha256-lcUptEWyRDkjQyvPyT570bhIijUkEvpHH2OOd2dEQok=",
 		"url": "https://stepmaniaonline.net/download/pack/252/"
@@ -192,6 +224,10 @@
 	"barber-cuts-2": {
 		"hash": "sha256-Zz7MnPFbyLJn2N390b1hKJKZrbEPhRGyRgXjbCXb7tI=",
 		"url": "https://drive.usercontent.google.com/download?confirm=t&id=1pCfCpMm1olJwv2t3_WTRl1q-LL5FAz6g"
+	},
+	"barber-cuts-3": {
+		"hash": "sha256-npojUghGVuvR4R0Q5L+F0267YW8Rl9M16JIFR+CKx+s=",
+		"url": "https://drive.usercontent.google.com/download?confirm=t&id=13GsD2HjG8zbqmh_blkL18E-N3xYFzSad"
 	},
 	"belladonnastreamz": {
 		"hash": "sha256-OU/hOC5uJ0XaUkonY/3UiGyM7A1Tb+JV6NGEUWzRh00=",
@@ -245,6 +281,10 @@
 		"hash": "sha256-zfgZTkN8sJXfrg8MzlxURyiw/nTdxq4912aqrDQbaPg=",
 		"url": "https://drive.usercontent.google.com/download?confirm=t&id=13DLFr0H_G0o2HuZJigvAZ5hpxT28rQEA"
 	},
+	"better-days": {
+		"hash": "sha256-8didlt/AwmrG7Pdu0pZhz8t5x+TH6e/CJqxCWzqd68Q=",
+		"url": "https://mirror.reenigne.net/simfiles/Better%20Days.zip"
+	},
 	"big-bag-3": {
 		"hash": "sha256-/srmly/PYeFT/kTm7nnIISOVc8SL5LNNzqa/XQOXiuI=",
 		"url": "https://www.dropbox.com/s/37c6e864epqhpsd/Big%20bag%203.zip?dl=1&dl=1"
@@ -296,6 +336,10 @@
 	"blue-arrow-project-1-5": {
 		"hash": "sha256-uQFtA+vqgD5PRL2lI+/l5etTBKOQMNMFPtIg145LIoc=",
 		"url": "https://nextcloud.573573573.xyz/s/bap15/download"
+	},
+	"blue-arrow-project-2": {
+		"hash": "sha256-v1aakQSVeW2zhNv1wE9zyfEVVas5B/z4X9Grz4Ubqds=",
+		"url": "https://nextcloud.573573573.xyz/s/bap2/download"
 	},
 	"blue-arrow-project-3": {
 		"hash": "sha256-QQJS7gBAJhmWp++gAxJahnj8erRvz49uMitInmnvKPA=",
@@ -393,6 +437,10 @@
 	"c-jotas-side-quests": {
 		"hash": "sha256-hZjjGqA/fKmIlcFOa4d2jqcChshJNmawoBAeeUFjG5c=",
 		"url": "https://drive.usercontent.google.com/download?confirm=t&id=1_AU964LwZ8i6d0tTG5ONjdQx8x6yLzAm"
+	},
+	"cafe-cursed-3": {
+		"hash": "sha256-QVBpYHw/jVBsMqZ95DDOPHH7VcLUZ89Epp2ZAi0zw/w=",
+		"url": "https://mirror.reenigne.net/simfiles/Cafe%20Cursed%203.zip"
 	},
 	"camellia-mix": {
 		"hash": "sha256-wzUslm/2GsGXsijGZeRAEyJJ/9rtkJBdA4J1JlXf55E=",
@@ -2520,6 +2568,10 @@
 	"weeb-exe": {
 		"hash": "sha256-W4ZJoL5fNbh3Iwd+ljeT24GP3eZ9jexlDJC4Gt72UAw=",
 		"url": "https://drive.usercontent.google.com/download?confirm=t&id=1j6quNqhbdg3iuS-t-AlOfc5MY9olpdT2"
+	},
+	"whatsacc": {
+		"hash": "sha256-Sjbzf0vtqo3m4iqjSmRcxDsQKI/LhyrGx9PWH3y7azc=",
+		"url": "https://drive.usercontent.google.com/download?confirm=t&id=11k-w9URpEibyu2MhnmEaIVpg0S865kZv"
 	},
 	"who-asked": {
 		"hash": "sha256-/rLLR46Or7/A8qcfxL6axE5TDyDoHAetfKKz64uSpII=",
