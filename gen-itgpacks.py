@@ -84,6 +84,7 @@ def gen_json(args):
                 or url.startswith("https://github.com/")
                 or url.startswith("https://mega.nz/")
                 or url.startswith("https://mirror.reenigne.net/simfiles/")
+                or url.startswith("https://nextcloud.573573573.xyz/")
                 or url.startswith("https://nnty.fun/")
                 or url.startswith("https://omid.gg")
                 or url.startswith("https://peekingboo.com/")
