@@ -1,9 +1,11 @@
-#!/usr/bin/env python
+#!/usr/bin/env nix-shell
+#!nix-shell -i python3 -p "python3.withPackages (ps: with ps; [ lxml ])"
 import csv
 import json
 import re
 import sys
 from argparse import ArgumentParser
+from lxml import html
 from pathlib import Path
 from urllib.error import HTTPError
 from urllib.parse import urlparse, urlencode
@@ -189,6 +191,27 @@ def sanitize_file(args):
             info(f"'{args.output}' created")
 
 
+def ziv_scrape(args):
+    packs_dict = {}
+    info("Scraping Zenius -I- Vanisher")
+    req = Request(
+        url="https://zenius-i-vanisher.com/v5.2/simfiles.php?category=simfiles",
+        method="GET",
+    )
+    with urlopen(req) as ziv_html:
+        tree = html.fromstring(ziv_html.read().decode())
+        ziv_packs = tree.xpath("//option")
+        for pack in ziv_packs:
+            name = sanitize(pack.text)
+            pack_id = pack.attrib["value"]
+            url = f"https://zenius-i-vanisher.com/v5.2/download.php?type=ddrpack&categoryid={pack_id}"
+            packs_dict[name] = {"hash": "", "rootdir": pack.text, "url": url}
+
+    with open(args.output, "w") as output:
+        json.dump(packs_dict, output, ensure_ascii=False, sort_keys=True, indent="\t")
+        info(f"'{args.output}' created")
+
+
 def main():
     parser = ArgumentParser()
     subparsers = parser.add_subparsers()
@@ -256,6 +279,18 @@ def main():
         "--output",
         "-o",
         default="itgpacks-sanitized.json",
+        type=Path,
+        help="Output file",
+    )
+
+    ziv_scrape_arg = subparsers.add_parser(
+        "ziv_scrape", aliases=["z"], help="Scrape Zenius -I- Vanisher songpacks"
+    )
+    ziv_scrape_arg.set_defaults(func=ziv_scrape)
+    ziv_scrape_arg.add_argument(
+        "--output",
+        "-o",
+        default="itgpacks-ziv.json",
         type=Path,
         help="Output file",
     )
