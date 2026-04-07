@@ -293,6 +293,14 @@
 		"hash": "sha256-r0B7u/iW40dDXC5ewS0keose/PBsJGNQwIJp2InCH4c=",
 		"url": "https://nnty.fun/downloads/game/stepmania/stepmania_packs/Blue%20Arrow%20Project.zip"
 	},
+	"blue-arrow-project-1-5": {
+		"hash": "sha256-uQFtA+vqgD5PRL2lI+/l5etTBKOQMNMFPtIg145LIoc=",
+		"url": "https://nextcloud.573573573.xyz/s/bap15/download"
+	},
+	"blue-arrow-project-3": {
+		"hash": "sha256-QQJS7gBAJhmWp++gAxJahnj8erRvz49uMitInmnvKPA=",
+		"url": "https://nextcloud.573573573.xyz/s/bap3/download"
+	},
 	"blue-revolver-arcade-action": {
 		"extension": "rar",
 		"hash": "sha256-8jGkURfRpkluCjpbfIe/uPShuNTM5/suIgWNCHYRaB8=",
@@ -2406,6 +2414,10 @@
 	"ultimate-pad-pack": {
 		"hash": "sha256-xThzVjyegmVhJfjapjdV9aFSJvjp3TLWcezvc6DILqo=",
 		"url": "https://mirror.reenigne.net/simfiles/Ultimate%20Pad%20Pack.zip"
+	},
+	"ultra-party-mixtapes": {
+		"hash": "sha256-vEJBjvZLZBmlhDxDAdSk4EIk9Z1QD3gLqIJOnqIgDbs=",
+		"url": "https://nextcloud.573573573.xyz/s/repo/download?path=%2Fpacks&files=ULTRA%20PARTY%20MIXTAPES"
 	},
 	"unbuild-of-sharpnel": {
 		"hash": "sha256-PcCkP5LLCD3ilOFF6HQAwxU/YqOeVkkOreu6pb72EI0=",
