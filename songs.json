@@ -2303,7 +2303,9 @@
 		"url": "https://nnty.fun/downloads/game/stepmania/stepmania_packs/The%20Skyhawk%20Genesis.zip"
 	},
 	"the-starter-pack-of-stamina-2": {
-		"hash": "",
+		"extension": "",
+		"hash": "sha256-RbLzgbM03W4dET42xYBvK8GWQetJk+w0ijZLU92yKMg=",
+		"rootdir": "The Starter Pack of Stamina 2",
 		"url": "https://mega.nz/folder/C5t0EbJD#bmL0H4wptzSOW1EIF8Wumw"
 	},
 	"the-technical-proficiency-exam": {
