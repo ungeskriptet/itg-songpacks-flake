@@ -9,8 +9,8 @@ from lxml import html
 from pathlib import Path
 from urllib.error import HTTPError
 from urllib.parse import urlparse, urlencode
-from urllib.request import Request, urlopen
-
+from urllib.request import HTTPRedirectHandler, Request, build_opener, urlopen
+from urllib.response import addinfourl
 
 """This is a mess"""
 
@@ -212,6 +212,38 @@ def ziv_scrape(args):
         info(f"'{args.output}' created")
 
 
+def ziv_check(args):
+    class NoRedirect(HTTPRedirectHandler):
+        def redirect_request(self, *_args: object) -> Request | None:
+            return None
+
+        def http_error_302(self, req, fp, code, msg, headers):
+            infourl = addinfourl(fp, headers, req.get_full_url())
+            return infourl
+
+    OPENER = build_opener(NoRedirect)
+
+    packs_dict = {}
+    info("Checking Zenius -I- Vanisher links")
+
+    with open(args.input) as input_file:
+        packs = json.load(input_file)
+        for key, value in packs.items():
+            if value["url"].startswith("https://zenius-i-vanisher.com/"):
+                req = Request(url=value["url"], method="GET")
+                with OPENER.open(req) as res:
+                    if res.getheader("location") != None:
+                        packs_dict[key] = value
+                    else:
+                        warning(f"Removing '{key}' (unavailable)")
+            else:
+                packs_dict[key] = value
+
+    with open(args.output, "w") as output:
+        json.dump(packs_dict, output, ensure_ascii=False, sort_keys=True, indent="\t")
+        info(f"'{args.output}' created")
+
+
 def main():
     parser = ArgumentParser()
     subparsers = parser.add_subparsers()
@@ -291,6 +323,21 @@ def main():
         "--output",
         "-o",
         default="itgpacks-ziv.json",
+        type=Path,
+        help="Output file",
+    )
+
+    ziv_check_arg = subparsers.add_parser(
+        "ziv_check", aliases=["zc"], help="Scrape Zenius -I- Vanisher songpacks"
+    )
+    ziv_check_arg.set_defaults(func=ziv_check)
+    ziv_check_arg.add_argument(
+        "--input", "-i", default="songs.json", type=Path, help="Input file"
+    )
+    ziv_check_arg.add_argument(
+        "--output",
+        "-o",
+        default="itgpacks-ziv-filtered.json",
         type=Path,
         help="Output file",
     )
