@@ -246,9 +246,8 @@ def ziv_check(args):
 
 
 def collect_hashes(args):
-    packs_dict = {}
-    info("Collecting hashes")
     with open(args.input) as input_file:
+        info("Collecting hashes")
         packs = json.load(input_file)
         for key, value in packs.items():
             if value["hash"] == "":
@@ -266,15 +265,12 @@ def collect_hashes(args):
                             nix_hash = line.lstrip("            got:    ").rstrip("\n")
                     prev_line = line.rstrip("\n")
                 process.wait()
-                packs_dict[key] = value
-                packs_dict[key]["hash"] = nix_hash
-                break
-            else:
-                packs_dict[key] = value
-
-    with open(args.output, "w") as output:
-        json.dump(packs_dict, output, ensure_ascii=False, sort_keys=True, indent="\t")
-        info(f"'{args.output}' created")
+                packs[key]["hash"] = nix_hash
+                with open(args.output, "w") as output:
+                    json.dump(
+                        packs, output, ensure_ascii=False, sort_keys=True, indent="\t"
+                    )
+                    info(f"Filled hash for '{key}'")
 
 
 def main():
