@@ -7,6 +7,7 @@ import sys
 from argparse import ArgumentParser
 from lxml import html
 from pathlib import Path
+from subprocess import Popen, PIPE
 from urllib.error import HTTPError
 from urllib.parse import urlparse, urlencode
 from urllib.request import HTTPRedirectHandler, Request, build_opener, urlopen
@@ -244,6 +245,38 @@ def ziv_check(args):
         info(f"'{args.output}' created")
 
 
+def collect_hashes(args):
+    packs_dict = {}
+    info("Collecting hashes")
+    with open(args.input) as input_file:
+        packs = json.load(input_file)
+        for key, value in packs.items():
+            if value["hash"] == "":
+                info(f"Building {key}")
+                cmd = ["nix-build", "--no-out-link", "-A", f"itgPacks.{key}"]
+                process = Popen(cmd, stderr=PIPE, text=True, bufsize=1)
+                prev_line = ""
+                for line in iter(process.stderr.readline, ""):
+                    print(line, end="")
+                    if (
+                        prev_line
+                        == "         specified: sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+                    ):
+                        if "            got:    sha256" in line:
+                            nix_hash = line.lstrip("            got:    ").rstrip("\n")
+                    prev_line = line.rstrip("\n")
+                process.wait()
+                packs_dict[key] = value
+                packs_dict[key]["hash"] = nix_hash
+                break
+            else:
+                packs_dict[key] = value
+
+    with open(args.output, "w") as output:
+        json.dump(packs_dict, output, ensure_ascii=False, sort_keys=True, indent="\t")
+        info(f"'{args.output}' created")
+
+
 def main():
     parser = ArgumentParser()
     subparsers = parser.add_subparsers()
@@ -338,6 +371,23 @@ def main():
         "--output",
         "-o",
         default="itgpacks-ziv-filtered.json",
+        type=Path,
+        help="Output file",
+    )
+
+    collect_hashes_arg = subparsers.add_parser(
+        "collect_hashes",
+        aliases=["ch"],
+        help="Collect hashes for songspacks with empty hash",
+    )
+    collect_hashes_arg.set_defaults(func=collect_hashes)
+    collect_hashes_arg.add_argument(
+        "--input", "-i", default="songs.json", type=Path, help="Input file"
+    )
+    collect_hashes_arg.add_argument(
+        "--output",
+        "-o",
+        default="itgpacks-hashes.json",
         type=Path,
         help="Output file",
     )
