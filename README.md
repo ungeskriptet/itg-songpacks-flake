@@ -22,17 +22,9 @@ Add a new item to the root object in the `songs.json` file:
    - Second column must be the URL.
    - Use `,` for the field delimiter and `"` for the string delimiter.
 2. Generate the JSON file using `./gen-itgpacks.py gen_json -i <input.csv>`.
-3. Merge the JSON output file with `songs.json`.
-4. Collect the hashes using `nix-build --no-out-link --keep-going 2>&1 | tee itgpacks-hashes.txt`.
-5. Create a JSON file for filling the hashes in `songs.json` with the following schema:
-   ```
-   {
-     "song-drv-name-1": "sha256-AAA...",
-     "song-drv-name-2": "sha256-BBB..."
-   }
-   ```
-6. Fill hashes using `./gen-itgpacks.py fill_hashes`.
-7. Merge the output file with `songs.json`.
+3. Check URLs for availability using `./gen-itgpacks.py url_check -i itgpacks-generated.json`
+4. Collect the hashes using `./gen-itgpacks.py collect_hashes -i itgpacks-filtered.json`.
+5. Merge the JSON output file with `songs.json`.
 
 #### Notes
 
