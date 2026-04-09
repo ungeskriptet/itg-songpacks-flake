@@ -124,35 +124,6 @@ def gen_json(args):
         info(f"Finished generating '{args.output}'")
 
 
-def check_gdrive(args):
-    packs_dict = {}
-
-    info("Checking Google Drive availability")
-
-    with open(args.input) as f:
-        packs = json.load(f)
-        for key, value in packs.items():
-            req = Request(url=value["url"], method="GET")
-            if value["url"].startswith("https://drive.usercontent.google.com"):
-                info(f"Checking {key}")
-                try:
-                    urlopen(req)
-                except HTTPError as e:
-                    if e.code == 404:
-                        warning(f"Google Drive returned 404 for {key}")
-                        packs_dict[key] = value
-                        continue
-                    else:
-                        raise
-
-    if packs_dicts != {}:
-        with open(args.output, "w") as file:
-            info(f"'{args.output}' created")
-            json.dump(packs_dict, file, ensure_ascii=False, sort_keys=True, indent="\t")
-
-    info("Finished checking Google Drive availability")
-
-
 def fill_hashes(args):
     """
     Input file example:
@@ -213,7 +184,7 @@ def ziv_scrape(args):
         info(f"'{args.output}' created")
 
 
-def ziv_check(args):
+def url_check(args):
     class NoRedirect(HTTPRedirectHandler):
         def redirect_request(self, *_args: object) -> Request | None:
             return None
@@ -225,20 +196,32 @@ def ziv_check(args):
     OPENER = build_opener(NoRedirect)
 
     packs_dict = {}
-    info("Checking Zenius -I- Vanisher links")
+    info("Checking URLs for availability")
 
     with open(args.input) as input_file:
         packs = json.load(input_file)
         for key, value in packs.items():
             if value["url"].startswith("https://zenius-i-vanisher.com/"):
-                req = Request(url=value["url"], method="GET")
+                info(f"Checking redirect for '{key}'")
+                req = Request(
+                    url=value["url"],
+                    method="GET",
+                    headers={"User-Agent": "ungeskriptet/itg-songpacks-flake"},
+                )
                 with OPENER.open(req) as res:
                     if res.getheader("location") != None:
                         packs_dict[key] = value
                     else:
-                        warning(f"Removing '{key}' (unavailable)")
+                        warning(f"Removing '{key}' (bad redirect)")
             else:
-                packs_dict[key] = value
+                info(f"Checking status code for '{key}'")
+                try:
+                    req = Request(url=value["url"], method="GET")
+                    urlopen(req)
+                    packs_dict[key] = value
+                except HTTPError as e:
+                    warning(f"Removing '{key}' (bad status code)")
+                    continue
 
     with open(args.output, "w") as output:
         json.dump(packs_dict, output, ensure_ascii=False, sort_keys=True, indent="\t")
@@ -292,21 +275,6 @@ def main():
         help="JSON output file",
     )
 
-    check_gdrive_arg = subparsers.add_parser(
-        "check_gdrive", aliases=["c"], help="Check Google Drive links"
-    )
-    check_gdrive_arg.set_defaults(func=check_gdrive)
-    check_gdrive_arg.add_argument(
-        "--input", "-i", default="itgpacks-generated.json", type=Path, help="Input file"
-    )
-    check_gdrive_arg.add_argument(
-        "--output",
-        "-o",
-        default="itgpacks-gdrive-failed.json",
-        type=Path,
-        help="Output file",
-    )
-
     fill_hashes_arg = subparsers.add_parser(
         "fill_hashes", aliases=["f"], help="Fill hashes"
     )
@@ -356,17 +324,17 @@ def main():
         help="Output file",
     )
 
-    ziv_check_arg = subparsers.add_parser(
-        "ziv_check", aliases=["zc"], help="Scrape Zenius -I- Vanisher songpacks"
+    url_check_arg = subparsers.add_parser(
+        "url_check", aliases=["uc"], help="Check URLs for availability"
     )
-    ziv_check_arg.set_defaults(func=ziv_check)
-    ziv_check_arg.add_argument(
+    url_check_arg.set_defaults(func=url_check)
+    url_check_arg.add_argument(
         "--input", "-i", default="songs.json", type=Path, help="Input file"
     )
-    ziv_check_arg.add_argument(
+    url_check_arg.add_argument(
         "--output",
         "-o",
-        default="itgpacks-ziv-filtered.json",
+        default="itgpacks-filtered.json",
         type=Path,
         help="Output file",
     )
