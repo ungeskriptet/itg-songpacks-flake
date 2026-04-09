@@ -16,6 +16,9 @@ from urllib.response import addinfourl
 """This is a mess"""
 
 
+USER_AGENT = {"User-Agent": "ungeskriptet/itg-songpacks-flake"}
+
+
 def info(text):
     print(f"\033[94mINFO: \033[00m{text}")
 
@@ -169,6 +172,7 @@ def ziv_scrape(args):
     req = Request(
         url="https://zenius-i-vanisher.com/v5.2/simfiles.php?category=simfiles",
         method="GET",
+        headers=USER_AGENT,
     )
     with urlopen(req) as ziv_html:
         tree = html.fromstring(ziv_html.read().decode())
@@ -203,11 +207,7 @@ def url_check(args):
         for key, value in packs.items():
             if value["url"].startswith("https://zenius-i-vanisher.com/"):
                 info(f"Checking redirect for '{key}'")
-                req = Request(
-                    url=value["url"],
-                    method="GET",
-                    headers={"User-Agent": "ungeskriptet/itg-songpacks-flake"},
-                )
+                req = Request(url=value["url"], method="GET", headers=USER_AGENT)
                 with OPENER.open(req) as res:
                     if res.getheader("location") != None:
                         packs_dict[key] = value
@@ -216,7 +216,7 @@ def url_check(args):
             else:
                 info(f"Checking status code for '{key}'")
                 try:
-                    req = Request(url=value["url"], method="GET")
+                    req = Request(url=value["url"], method="GET", headers=USER_AGENT)
                     urlopen(req)
                     packs_dict[key] = value
                 except HTTPError as e:
