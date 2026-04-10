@@ -7,7 +7,7 @@ import sys
 from argparse import ArgumentParser
 from lxml import html
 from pathlib import Path
-from subprocess import Popen, PIPE
+from subprocess import Popen, PIPE, run
 from urllib.error import HTTPError
 from urllib.parse import urlparse, urlencode
 from urllib.request import HTTPRedirectHandler, Request, build_opener, urlopen
@@ -256,6 +256,84 @@ def collect_hashes(args):
                     info(f"Filled hash for '{key}'")
 
 
+class RunCmdError(Exception):
+    pass
+
+
+def run_cmd(cmd, cwd=None):
+    process = Popen(cmd, cwd=cwd, stdout=PIPE, stderr=PIPE, text=True, bufsize=1)
+    for line in iter(process.stderr.readline, ""):
+        print(line, end="")
+    process.wait()
+    last_line = None
+    for line in iter(process.stdout.readline, ""):
+        last_line = line.rstrip("\n")
+    if last_line == None:
+        raise RunCmdError
+    return last_line
+
+
+def build_test(args):
+    flake_path = "/".join(__file__.split("/")[:-1])
+    if args.pack != None:
+        packs = [args.pack]
+    elif args.json != None:
+        with open(args.json) as file:
+            packs = json.load(file)
+            packs = list(packs.keys())
+    else:
+        cmd = [
+            "nix-instantiate",
+            "--eval",
+            "-E",
+            "let pkgs = import <nixpkgs> { }; in with pkgs.callPackage ./. { }; builtins.attrNames itgPacks",
+            "--json",
+        ]
+        packs = run(cmd, capture_output=True, cwd=flake_path, text=True)
+        packs = json.loads(packs.stdout)
+    try:
+        with open(args.input) as input_file:
+            build_info = json.load(input_file)
+            try:
+                build_info["successful"]
+                try:
+                    build_info["failed"]
+                except:
+                    build_info["failed"] = []
+            except:
+                build_info["successful"] = []
+    except:
+        build_info = {"successful": [], "failed": []}
+    for pack_name in packs:
+        if pack_name in build_info["successful"]:
+            info(f"Skipping '{pack_name}'")
+            continue
+        try:
+            info(f"Fetching source for '{pack_name}'")
+            cmd = ["nix-build", "--no-out-link", "-A", f"itgPacks.{pack_name}.src"]
+            src = run_cmd(cmd, flake_path)
+            info(f"Testing build for '{pack_name}'")
+            cmd = ["nix-build", "--no-out-link", "-A", f"itgPacks.{pack_name}"]
+            out = run_cmd(cmd, flake_path)
+            build_info["successful"] += [pack_name]
+        except RunCmdError:
+            warning(f"Build failed for '{pack_name}'")
+            build_info["failed"] = [pack_name]
+        if args.output != Path(""):
+            with open(args.output, "w") as file:
+                json.dump(
+                    build_info, file, ensure_ascii=False, sort_keys=True, indent="\t"
+                )
+        if args.delete:
+            try:
+                cmd = ["nix-store", "--delete", src]
+                run(cmd)
+                cmd = ["nix-store", "--delete", out]
+                run(cmd)
+            except:
+                pass
+
+
 def main():
     parser = ArgumentParser()
     subparsers = parser.add_subparsers()
@@ -354,6 +432,45 @@ def main():
         default="itgpacks-hashes.json",
         type=Path,
         help="Output file",
+    )
+
+    build_test_arg = subparsers.add_parser(
+        "build_test",
+        aliases=["bt"],
+        help="Test if all songpacks can build.",
+    )
+    build_test_arg.set_defaults(func=build_test)
+    group = build_test_arg.add_mutually_exclusive_group()
+    group.add_argument(
+        "--json",
+        "-j",
+        default=None,
+        type=Path,
+        help="Path to JSON file containing songpacks (like songs.json). Will attempt to build all songpacks if left empty.",
+    )
+    group.add_argument(
+        "--pack",
+        "-p",
+        default=None,
+        type=str,
+        help="Build specific songpack. Will attempt build all songpacks if left empty.",
+    )
+    build_test_arg.add_argument(
+        "--input",
+        "-i",
+        default="itgpacks-build-result.json",
+        type=Path,
+        help="Path to input file with builds to skip. Empty argument will disable the reading of a skip list.",
+    )
+    build_test_arg.add_argument(
+        "--output",
+        "-o",
+        default="itgpacks-build-result.json",
+        type=Path,
+        help="Path to output file with build info. Use empty argument to disable creating this file.",
+    )
+    build_test_arg.add_argument(
+        "--delete", "-d", action="store_true", help="Clean up after each build attempt."
     )
 
     args = parser.parse_args(args=None if sys.argv[1:] else ["--help"])
