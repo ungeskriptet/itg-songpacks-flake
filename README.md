@@ -12,8 +12,9 @@ Add a new item to the root object in the `songs.json` file:
   and contain a hash, URL and optionally a file extension in case the songpack is not a ZIP file.
 - If the pack name starts with a number, make sure to prefix it using an underscore (`_`).
   - E.g. `15gays1pack` -> `_15gays1pack`
-- To generate the hash, attempt to built it first using an empty hash, then paste in the correct
+- To generate the hash, attempt to build it first using an empty hash, then paste in the correct
   hash from the failed build output.
+- Build using `nix-build -A itgPacks.<packname>` or `nix build path:.#itgPacks.<packname>`.
 
 #### Import songpack batch
 
