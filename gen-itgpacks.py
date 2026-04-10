@@ -127,29 +127,6 @@ def gen_json(args):
         info(f"Finished generating '{args.output}'")
 
 
-def fill_hashes(args):
-    """
-    Input file example:
-    {
-      'pack-drv-name-1': 'sha256-AAA...',
-      'pack-drv-name-2': 'sha256-BBB...'
-    }
-    """
-    with open(args.input) as input_file:
-        packs = json.load(input_file)
-
-        with open(args.hashes) as hash_file:
-            hashes = json.load(hash_file)
-            for pack_key, pack_value in packs.items():
-                for hash_key, hash_value in hashes.items():
-                    if pack_key == hash_key:
-                        packs[pack_key]["hash"] = hash_value
-
-        with open(args.output, "w") as file:
-            json.dump(packs, file, ensure_ascii=False, sort_keys=True, indent="\t")
-            info(f"'{args.output}' created")
-
-
 def sanitize_file(args):
     with open(args.input) as input_file:
         info(f"Sanitizing '{args.output}'")
@@ -351,28 +328,6 @@ def main():
         default="itgpacks-generated.json",
         type=Path,
         help="JSON output file",
-    )
-
-    fill_hashes_arg = subparsers.add_parser(
-        "fill_hashes", aliases=["f"], help="Fill hashes"
-    )
-    fill_hashes_arg.set_defaults(func=fill_hashes)
-    fill_hashes_arg.add_argument(
-        "--input", "-i", default="itgpacks-generated.json", type=Path, help="Input file"
-    )
-    fill_hashes_arg.add_argument(
-        "--hashes",
-        "-H",
-        default="itgpacks-hashes.json",
-        type=Path,
-        help="Input file with hashes",
-    )
-    fill_hashes_arg.add_argument(
-        "--output",
-        "-o",
-        default="itgpacks-filled-hashes.json",
-        type=Path,
-        help="Output file",
     )
 
     sanitize_arg = subparsers.add_parser(
