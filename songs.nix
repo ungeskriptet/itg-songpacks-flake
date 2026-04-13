@@ -91,17 +91,18 @@ let
           dest = if rootdir != null then lib.escapeShellArg "/${baseNameOf rootdir}" else "";
         in
         ''
-          if [ $(ls -A . | wc -l) == 1 ]; then
+          if [ -d */${source} ]; then
             cd *
-          fi
-          if [ -d ${source} ]; then
+            mkdir -p "$out"/itgmania/Songs
+            if [ -d ${source} ]; then
+              mv -- ${source} "$out"/itgmania/Songs${dest}
+            else
+              mkdir -p "$out"/itgmania/Songs${dest}
+              mv * "$out"/itgmania/Songs${dest}
+            fi
+          elif [ -d ${source} ]; then
             mkdir -p "$out"/itgmania/Songs
             mv -- ${source} "$out"/itgmania/Songs${dest}
-          else
-            # For packs with songs in the root of the source
-            # (Like songpacks from Zenius -I- Vanisher)
-            mkdir -p "$out"/itgmania/Songs/${source}
-            mv -- {.*,*} "$out"/itgmania/Songs/${source}
           fi
         '';
     });
