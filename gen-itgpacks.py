@@ -17,6 +17,7 @@ from urllib.response import addinfourl
 
 
 USER_AGENT = {"User-Agent": "ungeskriptet/itg-songpacks-flake"}
+FLAKE_PATH = "/".join(__file__.split("/")[:-1])
 
 
 def info(text):
@@ -209,28 +210,39 @@ def collect_hashes(args):
     with open(args.input) as input_file:
         info("Collecting hashes")
         packs = json.load(input_file)
-        for key, value in packs.items():
-            if value["hash"] == "":
-                info(f"Building {key}")
-                cmd = ["nix-build", "--no-out-link", "-A", f"itgPacks.{key}"]
-                process = Popen(cmd, stderr=PIPE, text=True, bufsize=1)
-                prev_line = ""
-                for line in iter(process.stderr.readline, ""):
-                    print(line, end="")
-                    if (
-                        prev_line
-                        == "         specified: sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
-                    ):
-                        if "            got:    sha256" in line:
-                            nix_hash = line.lstrip("            got:    ").rstrip("\n")
-                    prev_line = line.rstrip("\n")
-                process.wait()
-                packs[key]["hash"] = nix_hash
-                with open(args.output, "w") as output:
-                    json.dump(
-                        packs, output, ensure_ascii=False, sort_keys=True, indent="\t"
-                    )
-                    info(f"Filled hash for '{key}'")
+    for key, value in packs.items():
+        if value["hash"] == "" or args.all:
+            info(f"Building {key}")
+            cmd = [
+                "nix-instantiate",
+                "--eval",
+                "-E",
+                f"let pkgs = import <nixpkgs> {{ }}; in with pkgs.callPackage ./. {{ }}; itgPacks.{key}.src.outPath",
+                "--json",
+            ]
+            out_path = run(cmd, capture_output=True, cwd=FLAKE_PATH, text=True)
+            out_path = json.loads(out_path.stdout)
+            cmd = ["nix-build", "--no-out-link", "-A", f"itgPacks.{key}.src"]
+            process = Popen(cmd, stderr=PIPE, text=True, bufsize=1)
+            prev_line = ""
+            for line in iter(process.stderr.readline, ""):
+                print(line, end="")
+                if prev_line.startswith("         specified: sha256"):
+                    if "            got:    sha256" in line:
+                        nix_hash = line.lstrip("            got:    ").rstrip("\n")
+                prev_line = line.rstrip("\n")
+            process.wait()
+            packs[key]["hash"] = nix_hash
+            with open(args.output, "w") as output:
+                json.dump(
+                    packs, output, ensure_ascii=False, sort_keys=True, indent="\t"
+                )
+                info(f"Filled hash for '{key}'")
+            try:
+                cmd = ["nix-store", "--delete", out_path]
+                run(cmd)
+            except:
+                pass
 
 
 class RunCmdError(Exception):
@@ -251,7 +263,6 @@ def run_cmd(cmd, cwd=None):
 
 
 def build_test(args):
-    flake_path = "/".join(__file__.split("/")[:-1])
     if args.pack != None:
         packs = [args.pack]
     elif args.json != None:
@@ -266,7 +277,7 @@ def build_test(args):
             "let pkgs = import <nixpkgs> { }; in with pkgs.callPackage ./. { }; builtins.attrNames itgPacks",
             "--json",
         ]
-        packs = run(cmd, capture_output=True, cwd=flake_path, text=True)
+        packs = run(cmd, capture_output=True, cwd=FLAKE_PATH, text=True)
         packs = json.loads(packs.stdout)
     try:
         with open(args.input) as input_file:
@@ -288,10 +299,10 @@ def build_test(args):
         try:
             info(f"Fetching source for '{pack_name}'")
             cmd = ["nix-build", "--no-out-link", "-A", f"itgPacks.{pack_name}.src"]
-            src = run_cmd(cmd, flake_path)
+            src = run_cmd(cmd, FLAKE_PATH)
             info(f"Testing build for '{pack_name}'")
             cmd = ["nix-build", "--no-out-link", "-A", f"itgPacks.{pack_name}"]
-            out = run_cmd(cmd, flake_path)
+            out = run_cmd(cmd, FLAKE_PATH)
             build_info["successful"] += [pack_name]
         except RunCmdError:
             warning(f"Build failed for '{pack_name}'")
@@ -387,6 +398,12 @@ def main():
         default="itgpacks-hashes.json",
         type=Path,
         help="Output file",
+    )
+    collect_hashes_arg.add_argument(
+        "--delete", "-d", action="store_true", help="Clean up after fetching source"
+    )
+    collect_hashes_arg.add_argument(
+        "--all", "-a", action="store_true", help="Recalculate all hashes"
     )
 
     build_test_arg = subparsers.add_parser(
