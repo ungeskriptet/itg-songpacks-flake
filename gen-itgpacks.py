@@ -123,7 +123,7 @@ def gen_json(args):
                 packs_dict[name] = {"url": url, "hash": ""}
 
         with open(args.output, "w") as file:
-            json.dump(packs_dict, file, ensure_ascii=False, sort_keys=True, indent="\t")
+            json.dump(packs_dict, file, ensure_ascii=False, indent="\t")
 
         info(f"Finished generating '{args.output}'")
 
@@ -138,9 +138,7 @@ def sanitize_file(args):
             packs_sanitized[name] = value
 
         with open(args.output, "w") as file:
-            json.dump(
-                packs_sanitized, file, ensure_ascii=False, sort_keys=True, indent="\t"
-            )
+            json.dump(packs_sanitized, file, ensure_ascii=False, indent="\t")
             info(f"'{args.output}' created")
 
 
@@ -162,7 +160,7 @@ def ziv_scrape(args):
             packs_dict[name] = {"hash": "", "rootdir": pack.text, "url": url}
 
     with open(args.output, "w") as output:
-        json.dump(packs_dict, output, ensure_ascii=False, sort_keys=True, indent="\t")
+        json.dump(packs_dict, output, ensure_ascii=False, indent="\t")
         info(f"'{args.output}' created")
 
 
@@ -202,7 +200,7 @@ def url_check(args):
                     continue
 
     with open(args.output, "w") as output:
-        json.dump(packs_dict, output, ensure_ascii=False, sort_keys=True, indent="\t")
+        json.dump(packs_dict, output, ensure_ascii=False, indent="\t")
         info(f"'{args.output}' created")
 
 
@@ -234,9 +232,7 @@ def collect_hashes(args):
             process.wait()
             packs[key]["hash"] = nix_hash
             with open(args.output, "w") as output:
-                json.dump(
-                    packs, output, ensure_ascii=False, sort_keys=True, indent="\t"
-                )
+                json.dump(packs, output, ensure_ascii=False, indent="\t")
                 info(f"Filled hash for '{key}'")
             try:
                 cmd = ["nix-store", "--delete", out_path]
@@ -309,9 +305,7 @@ def build_test(args):
             build_info["failed"] = [pack_name]
         if args.output != Path(""):
             with open(args.output, "w") as file:
-                json.dump(
-                    build_info, file, ensure_ascii=False, sort_keys=True, indent="\t"
-                )
+                json.dump(build_info, file, ensure_ascii=False, indent="\t")
         if args.delete:
             try:
                 cmd = ["nix-store", "--delete", src]
