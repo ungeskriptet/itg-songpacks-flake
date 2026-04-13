@@ -2,7 +2,7 @@
   lib,
   stdenvNoCC,
   newScope,
-  fetchurl,
+  fetchzip,
   fetchMega,
   _7zz,
   unrar-free,
@@ -25,7 +25,16 @@ let
           name = "${finalAttrs.name}-source";
         in
         if (builtins.match "https://mega.nz(.*)" url == null) then
-          fetchurl { inherit url hash name; }
+          fetchzip {
+            inherit
+              url
+              hash
+              name
+              extension
+              ;
+            nativeBuildInputs = [ unrar-free ];
+            stripRoot = false;
+          }
         else
           fetchMega { inherit url hash name; };
 
@@ -82,6 +91,9 @@ let
           dest = if rootdir != null then lib.escapeShellArg "/${baseNameOf rootdir}" else "";
         in
         ''
+          if [ $(ls -A . | wc -l) == 1 ]; then
+            cd *
+          fi
           if [ -d ${source} ]; then
             mkdir -p "$out"/itgmania/Songs
             mv -- ${source} "$out"/itgmania/Songs${dest}
