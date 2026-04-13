@@ -227,16 +227,7 @@ def collect_hashes(args):
                     json.dump(packs, output, ensure_ascii=False, indent="\t")
                     info(f"Filled hash for '{key}'")
                 try:
-                    cmd = [
-                        "nix-instantiate",
-                        "--eval",
-                        "-E",
-                        f"let pkgs = import <nixpkgs> {{ }}; in with pkgs.callPackage ./. {{ }}; itgPacks.{key}.src.outPath",
-                        "--json",
-                    ]
-                    out_path = run(cmd, capture_output=True, cwd=FLAKE_PATH, text=True)
-                    out_path = json.loads(out_path.stdout)
-                    cmd = ["nix-store", "--delete", out_path]
+                    cmd = ["nix-collect-garbage"]
                     run(cmd)
                 except:
                     pass
