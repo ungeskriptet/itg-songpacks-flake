@@ -212,15 +212,6 @@ def collect_hashes(args):
         for key, value in packs.items():
             if value["hash"] == "" or args.all:
                 info(f"Building {key}")
-                cmd = [
-                    "nix-instantiate",
-                    "--eval",
-                    "-E",
-                    f"let pkgs = import <nixpkgs> {{ }}; in with pkgs.callPackage ./. {{ }}; itgPacks.{key}.src.outPath",
-                    "--json",
-                ]
-                out_path = run(cmd, capture_output=True, cwd=FLAKE_PATH, text=True)
-                out_path = json.loads(out_path.stdout)
                 cmd = ["nix-build", "--no-out-link", "-A", f"itgPacks.{key}.src"]
                 process = Popen(cmd, stderr=PIPE, text=True, bufsize=1)
                 prev_line = ""
@@ -236,6 +227,15 @@ def collect_hashes(args):
                     json.dump(packs, output, ensure_ascii=False, indent="\t")
                     info(f"Filled hash for '{key}'")
                 try:
+                    cmd = [
+                        "nix-instantiate",
+                        "--eval",
+                        "-E",
+                        f"let pkgs = import <nixpkgs> {{ }}; in with pkgs.callPackage ./. {{ }}; itgPacks.{key}.src.outPath",
+                        "--json",
+                    ]
+                    out_path = run(cmd, capture_output=True, cwd=FLAKE_PATH, text=True)
+                    out_path = json.loads(out_path.stdout)
                     cmd = ["nix-store", "--delete", out_path]
                     run(cmd)
                 except:
