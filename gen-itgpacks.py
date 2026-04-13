@@ -208,8 +208,8 @@ def collect_hashes(args):
     with open(args.input) as input_file:
         info("Collecting hashes")
         packs = json.load(input_file)
-    try:
-        for key, value in packs.items():
+    for key, value in packs.items():
+        try:
             if value["hash"] == "" or args.all:
                 info(f"Building {key}")
                 cmd = ["nix-build", "--no-out-link", "-A", f"itgPacks.{key}.src"]
@@ -226,13 +226,12 @@ def collect_hashes(args):
                 with open(args.output, "w") as output:
                     json.dump(packs, output, ensure_ascii=False, indent="\t")
                     info(f"Filled hash for '{key}'")
-                try:
-                    cmd = ["nix-collect-garbage"]
-                    run(cmd)
-                except:
-                    pass
-    except:
-        pass
+                if args.delete:
+                    cmd = [f"nix-store --delete /nix/store/*{key}*"]
+                    run(cmd, shell=True)
+        except UnboundLocalError:
+            warning(f"Failed to get hash for {key}")
+            pass
 
 
 class RunCmdError(Exception):
