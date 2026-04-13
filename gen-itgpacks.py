@@ -208,37 +208,40 @@ def collect_hashes(args):
     with open(args.input) as input_file:
         info("Collecting hashes")
         packs = json.load(input_file)
-    for key, value in packs.items():
-        if value["hash"] == "" or args.all:
-            info(f"Building {key}")
-            cmd = [
-                "nix-instantiate",
-                "--eval",
-                "-E",
-                f"let pkgs = import <nixpkgs> {{ }}; in with pkgs.callPackage ./. {{ }}; itgPacks.{key}.src.outPath",
-                "--json",
-            ]
-            out_path = run(cmd, capture_output=True, cwd=FLAKE_PATH, text=True)
-            out_path = json.loads(out_path.stdout)
-            cmd = ["nix-build", "--no-out-link", "-A", f"itgPacks.{key}.src"]
-            process = Popen(cmd, stderr=PIPE, text=True, bufsize=1)
-            prev_line = ""
-            for line in iter(process.stderr.readline, ""):
-                print(line, end="")
-                if prev_line.startswith("         specified: sha256"):
-                    if "            got:    sha256" in line:
-                        nix_hash = line.lstrip("            got:    ").rstrip("\n")
-                prev_line = line.rstrip("\n")
-            process.wait()
-            packs[key]["hash"] = nix_hash
-            with open(args.output, "w") as output:
-                json.dump(packs, output, ensure_ascii=False, indent="\t")
-                info(f"Filled hash for '{key}'")
-            try:
-                cmd = ["nix-store", "--delete", out_path]
-                run(cmd)
-            except:
-                pass
+    try:
+        for key, value in packs.items():
+            if value["hash"] == "" or args.all:
+                info(f"Building {key}")
+                cmd = [
+                    "nix-instantiate",
+                    "--eval",
+                    "-E",
+                    f"let pkgs = import <nixpkgs> {{ }}; in with pkgs.callPackage ./. {{ }}; itgPacks.{key}.src.outPath",
+                    "--json",
+                ]
+                out_path = run(cmd, capture_output=True, cwd=FLAKE_PATH, text=True)
+                out_path = json.loads(out_path.stdout)
+                cmd = ["nix-build", "--no-out-link", "-A", f"itgPacks.{key}.src"]
+                process = Popen(cmd, stderr=PIPE, text=True, bufsize=1)
+                prev_line = ""
+                for line in iter(process.stderr.readline, ""):
+                    print(line, end="")
+                    if prev_line.startswith("         specified: sha256"):
+                        if "            got:    sha256" in line:
+                            nix_hash = line.lstrip("            got:    ").rstrip("\n")
+                    prev_line = line.rstrip("\n")
+                process.wait()
+                packs[key]["hash"] = nix_hash
+                with open(args.output, "w") as output:
+                    json.dump(packs, output, ensure_ascii=False, indent="\t")
+                    info(f"Filled hash for '{key}'")
+                try:
+                    cmd = ["nix-store", "--delete", out_path]
+                    run(cmd)
+                except:
+                    pass
+    except:
+        pass
 
 
 class RunCmdError(Exception):
