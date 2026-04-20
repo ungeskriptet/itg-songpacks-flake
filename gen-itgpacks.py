@@ -311,6 +311,9 @@ def build_test(args):
 
 def smo_scrape(args):
     packs_dict = {}
+    if args.input != Path(""):
+        with open(args.input) as input_file:
+            packs_dict = json.load(input_file)
     info("Scraping stepmaniaonline.net")
     req = Request(
         url="https://stepmaniaonline.net/",
@@ -337,12 +340,17 @@ def smo_scrape(args):
                     title = tree.xpath("//title/text()")[0].split("Pack - ")[1]
                     title = sanitize(title)
                     info(f"Found '{title}' with ID {pack_id}")
-                    packs_dict[title] = {
-                        "hash": "",
-                        "url": f"https://stepmaniaonline.net/download/pack/{pack_id}/",
-                    }
-                    with open(args.output, "w") as output:
-                        json.dump(packs_dict, output, ensure_ascii=False, indent="\t")
+                    if title not in packs_dict:
+                        packs_dict[title] = {
+                            "hash": "",
+                            "url": f"https://stepmaniaonline.net/download/pack/{pack_id}/",
+                        }
+                        with open(args.output, "w") as output:
+                            json.dump(
+                                packs_dict, output, ensure_ascii=False, indent="\t"
+                            )
+                    else:
+                        warning(f"Skipping pack: {title}")
             except IndexError:
                 warning(f"Couldn't fetch pack ID {pack_id}")
                 pass
@@ -481,6 +489,9 @@ def main():
         default="itgpacks-smo.json",
         type=Path,
         help="Output file",
+    )
+    smo_scrape_arg.add_argument(
+        "--input", "-i", default="songs.json", type=Path, help="Input file"
     )
 
     args = parser.parse_args(args=None if sys.argv[1:] else ["--help"])
