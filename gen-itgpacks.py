@@ -309,6 +309,45 @@ def build_test(args):
                 pass
 
 
+def smo_scrape(args):
+    packs_dict = {}
+    info("Scraping stepmaniaonline.net")
+    req = Request(
+        url="https://stepmaniaonline.net/",
+        method="GET",
+        headers=USER_AGENT,
+    )
+    with urlopen(req) as smo_html:
+        tree = html.fromstring(smo_html.read().decode())
+        latest_pack = tree.xpath("//tr[1]/td[2]/div[1]/a[1]/@href")[0]
+        latest_pack = latest_pack.split("/pack/")[1]
+        latest_pack = int(latest_pack)
+        info(f"Latest pack has ID {latest_pack}")
+        pack_id = 0
+        while pack_id <= latest_pack:
+            pack_id += 1
+            req = Request(
+                url=f"https://stepmaniaonline.net/pack/{pack_id}",
+                method="GET",
+                headers=USER_AGENT,
+            )
+            try:
+                with urlopen(req) as pack_html:
+                    tree = html.fromstring(pack_html.read().decode())
+                    title = tree.xpath("//title/text()")[0].split("Pack - ")[1]
+                    title = sanitize(title)
+                    info(f"Found '{title}' with ID {pack_id}")
+                    packs_dict[title] = {
+                        "hash": "",
+                        "url": f"https://stepmaniaonline.net/download/pack/{pack_id}/",
+                    }
+                    with open(args.output, "w") as output:
+                        json.dump(packs_dict, output, ensure_ascii=False, indent="\t")
+            except IndexError:
+                warning(f"Couldn't fetch pack ID {pack_id}")
+                pass
+
+
 def main():
     parser = ArgumentParser()
     subparsers = parser.add_subparsers()
@@ -430,6 +469,18 @@ def main():
     )
     build_test_arg.add_argument(
         "--delete", "-d", action="store_true", help="Clean up after each build attempt."
+    )
+
+    smo_scrape_arg = subparsers.add_parser(
+        "smo_scrape", aliases=["sm"], help="Scrape stepmaniaonline.net songpacks"
+    )
+    smo_scrape_arg.set_defaults(func=smo_scrape)
+    smo_scrape_arg.add_argument(
+        "--output",
+        "-o",
+        default="itgpacks-smo.json",
+        type=Path,
+        help="Output file",
     )
 
     args = parser.parse_args(args=None if sys.argv[1:] else ["--help"])
