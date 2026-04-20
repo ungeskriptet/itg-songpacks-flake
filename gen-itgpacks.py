@@ -130,7 +130,7 @@ def gen_json(args):
 
 def sanitize_file(args):
     with open(args.input) as input_file:
-        info(f"Sanitizing '{args.output}'")
+        info(f"Sanitizing '{args.input}'")
         packs = json.load(input_file)
         packs_sanitized = {}
         for key, value in packs.items():
