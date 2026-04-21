@@ -26,7 +26,10 @@
               nixfmt.enable = true;
               biome = {
                 enable = true;
-                settings.assist.actions.source.useSortedKeys = "on";
+                settings = {
+                  assist.actions.source.useSortedKeys = "on";
+                  files.maxSize = 1024 * 1024 * 2; # 2 MiB
+                };
               };
               mdformat = {
                 enable = true;
