@@ -208,10 +208,17 @@ def collect_hashes(args):
     with open(args.input) as input_file:
         info("Collecting hashes")
         packs = json.load(input_file)
+    empty_hashes_count = 0
+    for key, value in packs.items():
+        if value["hash"] == "":
+            empty_hashes_count += 1
+    info(f"Will attempt to fill {empty_hashes_count} hashes")
+    progress = 0
     for key, value in packs.items():
         try:
             if value["hash"] == "" or args.all:
-                info(f"Building {key}")
+                progress += 1
+                info(f"Building '{key}' [{progress}/{empty_hashes_count}]")
                 cmd = ["nix-build", "--no-out-link", "-A", f"itgPacks.{key}.src"]
                 process = Popen(cmd, stderr=PIPE, text=True, bufsize=1)
                 prev_line = ""
