@@ -2,6 +2,48 @@
 
 Manage ITGmania songspacks declaratively using nix
 
+### Usage
+
+#### NixOS (Flakes)
+
+1. Add the following input to your `flake.nix`:
+   ```nix
+   inputs = {
+     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+     itgpacks = {
+       url = "git+https://codeberg.org/ungeskriptet/itg-songpacks-flake.git";
+       inputs.nixpkgs.follows = "nixpkgs";
+     };
+   };
+   ```
+   Don't forget to pass the new input to your `nixosConfigurations` definition.
+2. Now install ITGmania in your environment like so:
+   ```nix
+   { pkgs, inputs, ... }:
+   {
+     environment.systemPackages = [
+       (pkgs.itgmania.override {
+         extraPackages =
+           with inputs.itgpacks.itgPacks.${pkgs.stdenv.hostPlatform.system};
+           [
+             _15gays1pack
+             blue-arrow-project-3
+             itl-online-2025
+             # See songs.json for a full list of songpacks
+           ]
+           ++ (with pkgs.itgmaniaPackages; [
+             # For a full list of additional packages see
+             # https://github.com/NixOS/nixpkgs/blob/master/pkgs/by-name/it/itgmania/packages.nix
+             digital-dance
+             zmod-simply-love
+           ]);
+       })
+     ];
+   }
+   ```
+3. After running `nixos-rebuild` ITGmania should now have all defined songpacks and themes. You can
+   still install songpacks, themes, etc. the usual way.
+
 ### Adding new songs to this flake
 
 #### Manually
