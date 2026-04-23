@@ -7,7 +7,7 @@
     };
   };
   outputs =
-    { nixpkgs, self, ... }@inputs:
+    { nixpkgs, ... }@inputs:
     let
       forAllSystems = nixpkgs.lib.genAttrs [
         "x86_64-linux"
@@ -48,15 +48,12 @@
       );
     in
     {
-      packages = forAllSystems (
+      itgPacks = forAllSystems (
         system:
         let
           pkgs = nixpkgs.legacyPackages.${system};
         in
-        {
-          default = self.packages.${system}.itgPacks;
-        }
-        // pkgs.lib.recurseIntoAttrs (pkgs.callPackage ./default.nix { inherit pkgs; })
+        (pkgs.lib.recurseIntoAttrs (pkgs.callPackage ./default.nix { inherit pkgs; })).itgPacks
       );
       formatter = forAllSystems (system: treefmtEval.${system}.config.build.wrapper);
     };
