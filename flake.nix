@@ -9,10 +9,7 @@
   outputs =
     { nixpkgs, ... }@inputs:
     let
-      forAllSystems = nixpkgs.lib.genAttrs [
-        "x86_64-linux"
-        "aarch64-linux"
-      ];
+      forAllSystems = nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed;
       treefmtEval = forAllSystems (
         system:
         inputs.treefmt-nix.lib.evalModule nixpkgs.legacyPackages.${system} (
