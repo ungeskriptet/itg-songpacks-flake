@@ -363,7 +363,7 @@ def smo_scrape(args):
 
 
 def parse_dir(args):
-    packs_dict = {}
+    packs_list = []
     with open(args.input) as input_file:
         packs_dict = json.load(input_file)
     songs_path = args.dir.expanduser()
@@ -373,6 +373,13 @@ def parse_dir(args):
             pack_name = sanitize(item)
             if pack_name not in packs_dict:
                 warning(f"Missing pack: {item} ({pack_name})")
+            else:
+                packs_list += [pack_name]
+    if args.generate_nix:
+        print("pkgs.itgmania.override { extraPackages = with itgPacks; [")
+        for pack in packs_list:
+            print(f"  {pack}")
+        print("]}")
 
 
 def main():
@@ -526,6 +533,13 @@ def main():
     )
     parse_dir_arg.add_argument(
         "--dir", "-d", default="~/.itgmania/Songs", type=Path, help="Directory to check"
+    )
+    parse_dir_arg.add_argument(
+        "--generate-nix",
+        "-g",
+        action="store_true",
+        default=True,
+        help="Generate nix package expression based on directory",
     )
 
     args = parser.parse_args(args=None if sys.argv[1:] else ["--help"])
