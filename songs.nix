@@ -1,13 +1,24 @@
 {
   lib,
   stdenvNoCC,
+  makeSetupHook,
   newScope,
+  writeShellScript,
   fetchzip,
   fetchMega,
   _7zz,
   unrar-free,
 }:
 let
+  _7zzHook = makeSetupHook { name = "_7zzHook"; } (
+    writeShellScript "7zz-hook.sh" ''
+      unpackCmdHooks+=(_try7zip)
+      _try7zip() {
+        if ! [[ $curSrc =~ \.zip$ ]]; then return 1; fi
+        ${lib.getExe _7zz} x "$curSrc"
+      }
+    ''
+  );
   buildSongPack =
     {
       name,
@@ -25,31 +36,26 @@ let
           name = "${finalAttrs.name}-source";
         in
         if (builtins.match "https://mega.nz(.*)" url == null) then
-          fetchzip {
+          (fetchzip.override { withUnzip = false; } {
             inherit
               url
               hash
               name
               extension
               ;
-            nativeBuildInputs = [ unrar-free ];
+            nativeBuildInputs = [
+              _7zzHook
+              unrar-free
+            ];
             stripRoot = false;
-          }
+          })
         else
           fetchMega { inherit url hash name; };
 
       nativeBuildInputs = [
-        _7zz
+        _7zzHook
         unrar-free
       ];
-
-      preUnpack = ''
-        unpackCmdHooks+=(_try7zip)
-        _try7zip() {
-          if ! [[ $curSrc =~ \.zip$ ]]; then return 1; fi
-          7zz x "$curSrc"
-        }
-      '';
 
       unpackPhase = ''
         runHook preUnpack
