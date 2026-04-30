@@ -2,6 +2,7 @@
 #!nix-shell -i python3 -p "python3.withPackages (ps: with ps; [ lxml ])"
 import csv
 import json
+import os
 import re
 import sys
 from argparse import ArgumentParser
@@ -62,8 +63,6 @@ def sanitize(name: str):
     # Fix possessive nouns
     name = "s-".join(name.split("-s-"))
 
-    if len(name) >= 30:
-        warning(f"'{name}' has a long name")
     if name == "unknown":
         warning(f"Unable to sanitize '{original_name}'")
 
@@ -363,6 +362,19 @@ def smo_scrape(args):
                 pass
 
 
+def parse_dir(args):
+    packs_dict = {}
+    with open(args.input) as input_file:
+        packs_dict = json.load(input_file)
+    songs_path = args.dir.expanduser()
+    dir = os.listdir(songs_path)
+    for item in dir:
+        if os.path.isdir(os.path.join(songs_path, item)):
+            pack_name = sanitize(item)
+            if pack_name not in packs_dict:
+                warning(f"Missing pack: {item} ({pack_name})")
+
+
 def main():
     parser = ArgumentParser()
     subparsers = parser.add_subparsers()
@@ -499,6 +511,21 @@ def main():
     )
     smo_scrape_arg.add_argument(
         "--input", "-i", default="songs.json", type=Path, help="Input file"
+    )
+
+    parse_dir_arg = subparsers.add_parser(
+        "parse_dir", aliases=["pd"], help="Check songs.json for missing songpacks"
+    )
+    parse_dir_arg.set_defaults(func=parse_dir)
+    parse_dir_arg.add_argument(
+        "--input",
+        "-i",
+        default=os.path.join(FLAKE_PATH, "songs.json"),
+        type=Path,
+        help="Input file",
+    )
+    parse_dir_arg.add_argument(
+        "--dir", "-d", default="~/.itgmania/Songs", type=Path, help="Directory to check"
     )
 
     args = parser.parse_args(args=None if sys.argv[1:] else ["--help"])
