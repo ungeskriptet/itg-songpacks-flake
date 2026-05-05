@@ -62,22 +62,20 @@ let
         unpackDir="$TMPDIR/unpack"
         mkdir "$unpackDir"
         cd "$unpackDir"
-        if [ -f "$src" ]; then
+        if [ -f "$src" -a -n "${extension}" ]; then
+          renamed="$TMPDIR/${name}.${extension}"
+          cp -r "$src" "$renamed"
+          unpackFile "$renamed"
+        else
           ${
-            if extension != "" then
-              ''
-                renamed="$TMPDIR/${name}.${extension}"
-                cp -r "$src" "$renamed"
-                unpackFile "$renamed"
-              ''
+            if (rootdir == null) then
+              ''cp -r "$src"/{.*,*} .''
             else
               ''
-                mkdir "${rootdir}"
+                mkdir -p "${rootdir}"
                 cp -r "$src"/{.*,*} "${rootdir}"
               ''
           }
-        else
-          cp -r "$src"/{.*,*} .
         fi
         chmod -R +w "$unpackDir"
         runHook postUnpack
