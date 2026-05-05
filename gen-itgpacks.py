@@ -375,11 +375,24 @@ def parse_dir(args):
                 warning(f"Missing pack: {item} ({pack_name})")
             else:
                 packs_list += [pack_name]
-    if args.generate_nix:
+    if not args.flake and not args.run:
+        args.flake = True
+    if args.flake:
         print("pkgs.itgmania.override { extraPackages = with itgPacks; [")
         for pack in packs_list:
             print(f"  {pack}")
-        print("]}")
+        print("];}")
+    elif args.run:
+        expr = [
+            "with import <nixpkgs> { };",
+            f"let itgPacks = (import {FLAKE_PATH}/default.nix {{ }}).itgPacks; in",
+            "itgmania.override { extraPackages = with itgPacks; [",
+        ]
+        for pack in packs_list:
+            expr += [f"{pack}"]
+        expr += ["]; }"]
+        args = ["nix-shell", "-p", " ".join(expr), "--run", "itgmania"]
+        run(args)
 
 
 def main():
@@ -534,12 +547,18 @@ def main():
     parse_dir_arg.add_argument(
         "--dir", "-d", default="~/.itgmania/Songs", type=Path, help="Directory to check"
     )
-    parse_dir_arg.add_argument(
-        "--generate-nix",
-        "-g",
+    group = parse_dir_arg.add_mutually_exclusive_group()
+    group.add_argument(
+        "--flake",
+        "-f",
         action="store_true",
-        default=True,
-        help="Generate nix package expression based on directory",
+        help="Generate Nix expression for flakes based on songs directory.",
+    )
+    group.add_argument(
+        "--run",
+        "-r",
+        action="store_true",
+        help="Run ITGmania with nix-shell",
     )
 
     args = parser.parse_args(args=None if sys.argv[1:] else ["--help"])
