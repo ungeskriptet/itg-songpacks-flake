@@ -7,17 +7,21 @@ Manage ITGmania songspacks declaratively using nix
 #### NixOS (Flakes)
 
 1. Add the following input to your `flake.nix`:
+
    ```nix
    inputs = {
      nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-     itgpacks = {
-       url = "git+https://codeberg.org/ungeskriptet/itg-songpacks-flake.git";
-       inputs.nixpkgs.follows = "nixpkgs";
-     };
+     itgpacks.url = "https://codeberg.org/ungeskriptet/itg-songpacks-flake/archive/master.tar.gz";
    };
    ```
+
+   Note: Avoid overriding the `nixpkgs` input for `itgpacks`, since it might cause rebuild and there
+   is no cache available for this flake.
+
    Don't forget to pass the new input to your `nixosConfigurations` definition.
+
 2. Now install ITGmania in your environment like so:
+
    ```nix
    { pkgs, inputs, ... }:
    {
@@ -41,6 +45,7 @@ Manage ITGmania songspacks declaratively using nix
      ];
    }
    ```
+
 3. After running `nixos-rebuild` ITGmania should now have all defined songpacks and themes. You can
    still install songpacks, themes, etc. the usual way.
 
